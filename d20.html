@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D20 - O Encontro Final</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            overflow: hidden;
+            cursor: none; 
+        }
+
+        #torch-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            background: radial-gradient(circle 80px at var(--x) var(--y), rgba(255,255,255,0.08) 0%, rgba(0,0,0,1) 100%);
+            z-index: 5;
+        }
+
+        .image-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            z-index: 6;
+        }
+
+        .personagem {
+            width: 85px;
+            height: 125px;
+            border: 1px solid #111;
+            opacity: 0; 
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Cores de fallback */
+        #img-0 { background-color: #ff0000; }
+        #img-1 { background-color: #00ff00; }
+        #img-2 { background-color: #0000ff; }
+        #img-3 { background-color: #ffff00; }
+        #img-4 { background-color: #ff00ff; }
+        #img-5 { background-color: #00ffff; }
+        #img-6 { background-color: #ffffff; }
+
+        @keyframes blinkEffect {
+            0% { opacity: 0; filter: brightness(1); }
+            20% { opacity: 1; filter: brightness(2); }
+            100% { opacity: 0; filter: brightness(1); }
+        }
+
+        .piscar {
+            animation: blinkEffect 0.8s ease-out forwards;
+        }
+
+        .input-container {
+            padding-bottom: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        .dica-texto {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            max-width: 800px;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
+        .word {
+            color: #000; 
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+            user-select: none;
+            text-align: center;
+        }
+
+        .senha-field {
+            width: 75px;
+            height: 35px;
+            background-color: #050505;
+            border: 1px solid #222;
+            color: #fff;
+            text-align: center;
+            outline: none;
+        }
+
+        .field-longo {
+            width: 200px;
+        }
+
+        #tentativas-ui {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 12px;
+            color: #000;
+            z-index: 10;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: transparent;
+            color: #fff;
+            border: 1px solid #444;
+            cursor: pointer;
+            letter-spacing: 2px;
+        }
+
+        #final-btn {
+            display: none;
+            opacity: 0;
+            transition: opacity 6s ease-in;
+        }
+
+        #timer-msg, #blefe-msg {
+            color: #ff0000;
+            font-size: 12px;
+            height: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body onmousemove="handleMouseMove(event)">
+
+    <div id="torch-bg"></div>
+    <div id="tentativas-ui" class="word">Tentativas restantes: 20</div>
+
+    <div class="image-container">
+        <div class="personagem" id="img-0"></div>
+        <div class="personagem" id="img-1"></div>
+        <div class="personagem" id="img-2"></div>
+        <div class="personagem" id="img-3"></div>
+        <div class="personagem" id="img-4"></div>
+        <div class="personagem" id="img-5"></div>
+        <div class="personagem" id="img-6"></div>
+    </div>
+
+    <div class="input-container">
+        <div class="dica-texto" id="dica-container"></div>
+
+        <div class="senha-inputs" id="input-group">
+            <input type="text" class="senha-field" data-idx="0" autocomplete="off">
+            <input type="text" class="senha-field" data-idx="1" autocomplete="off">
+            <input type="text" class="senha-field" data-idx="2" autocomplete="off">
+            <input type="text" class="senha-field" data-idx="3" autocomplete="off">
+            <input type="text" class="senha-field" data-idx="4" autocomplete="off">
+            <input type="text" class="senha-field" data-idx="5" autocomplete="off">
+            <input type="text" class="senha-field" data-idx="6" autocomplete="off">
+            <input type="text" class="senha-field" data-idx="7" autocomplete="off" placeholder="?">
+            <input type="text" class="senha-field field-longo" data-idx="8" autocomplete="off" placeholder="...">
+        </div>
+
+        <div id="timer-msg"></div>
+        <div id="blefe-msg"></div>
+        
+        <button id="btn-verificar" onclick="verificar()">VERIFICAR</button>
+        <button id="final-btn" onclick="proximo()">FINALIZAR JORNADA</button>
+    </div>
+
+    <script>
+        const gabarito = [
+            "balu", "notry", "tulipa", "ane", "sellen", "toninho", "ludin", 
+            ["uiu", "will"], "plin plin plon family"
+        ];
+        
+        // Texto de dica enigmático baseado no seu pedido
+        const dicaTexto = "Sete almas unidas pelo brilho da tela, eternizadas no traço mas seguindo a ordem das sombras que já passaram. Aquele que é oculto e ausente do quadro mas não da tela, uma vez revelado, torna-se eterno e imutável no vácuo entre o grupo e a tinta. O destino final repousa onde as três notas de um reino caído ecoam para unir a linhagem.";
+        
+        let errosCount = 0;
+        let tentativasRestantes = 20;
+        let bloqueado = false;
+        let jaPiscou = [false, false, false, false, false, false, false];
+
+        const dicaContainer = document.getElementById('dica-container');
+        dicaTexto.split(" ").forEach(w => {
+            const span = document.createElement('span');
+            span.textContent = w;
+            span.className = 'word';
+            dicaContainer.appendChild(span);
+        });
+
+        function handleMouseMove(e) {
+            document.body.style.setProperty('--x', e.clientX + 'px');
+            document.body.style.setProperty('--y', e.clientY + 'px');
+
+            document.querySelectorAll('.word').forEach(el => {
+                const rect = el.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                const dist = Math.sqrt(Math.pow(e.clientX - centerX, 2) + Math.pow(e.clientY - centerY, 2));
+                el.style.color = dist < 85 ? "#ffffff" : "#000000";
+            });
+        }
+
+        // Lógica de trancar apenas o Coringa 1 (Will/Uiu)
+        document.querySelectorAll('.senha-field').forEach(input => {
+            input.addEventListener('input', function() {
+                const idx = parseInt(this.getAttribute('data-idx'));
+                const val = this.value.toLowerCase().trim();
+                
+                if (idx === 7 && gabarito[7].includes(val)) {
+                    this.readOnly = true;
+                    this.style.borderColor = "#ffffff";
+                }
+            });
+        });
+
+        function verificar() {
+            if (bloqueado) return;
+
+            const inputs = document.querySelectorAll('.senha-field');
+            let acertosContagem = 0;
+            
+            inputs.forEach(input => {
+                const idx = parseInt(input.getAttribute('data-idx'));
+                const val = input.value.toLowerCase().trim();
+                let correto = false;
+
+                if (idx === 7) {
+                    if (gabarito[7].includes(val)) correto = true;
+                } else if (idx === 8) {
+                    if (val === gabarito[8]) correto = true;
+                } else {
+                    if (val === gabarito[idx]) correto = true;
+                }
+
+                if (correto) {
+                    acertosContagem++;
+                    if (idx < 7 && !jaPiscou[idx]) {
+                        jaPiscou[idx] = true;
+                        const el = document.getElementById(`img-${idx}`);
+                        el.style.backgroundImage = `url('imagens/${val}.jpg')`;
+                        el.classList.add('piscar');
+                    }
+                }
+            });
+
+            if (acertosContagem === 9) {
+                document.getElementById('btn-verificar').style.display = 'none';
+                const fBtn = document.getElementById('final-btn');
+                fBtn.style.display = 'block';
+                setTimeout(() => fBtn.style.opacity = '1', 100);
+            } else {
+                tentativasRestantes--;
+                document.getElementById('tentativas-ui').innerText = `Tentativas restantes: ${tentativasRestantes}`;
+                
+                if (tentativasRestantes <= 0) {
+                    iniciarBlefe();
+                } else {
+                    aplicarDelay();
+                }
+            }
+        }
+
+        function aplicarDelay() {
+            bloqueado = true;
+            let tempo = 1 + (errosCount * 0.5);
+            errosCount++;
+            const msg = document.getElementById('timer-msg');
+            const btn = document.getElementById('btn-verificar');
+            btn.style.opacity = "0.2";
+            let timer = setInterval(() => {
+                msg.innerText = `Aguarde ${tempo.toFixed(1)}s...`;
+                tempo -= 0.1;
+                if (tempo <= 0) {
+                    clearInterval(timer);
+                    msg.innerText = "";
+                    btn.style.opacity = "1";
+                    bloqueado = false;
+                }
+            }, 100);
+        }
+
+        function iniciarBlefe() {
+            bloqueado = true;
+            document.getElementById('btn-verificar').style.display = 'none';
+            let segundosBlefe = 120;
+            const blefeMsg = document.getElementById('blefe-msg');
+            let timerBlefe = setInterval(() => {
+                blefeMsg.innerText = `SITE SENDO FECHADO EM ${segundosBlefe} SEGUNDOS`;
+                segundosBlefe--;
+                if (segundosBlefe < 0) {
+                    clearInterval(timerBlefe);
+                    blefeMsg.innerText = "OK ERA BLEFE";
+                }
+            }, 1000);
+        }
+
+        function proximo() {
+            window.location.href = "final.html";
+        }
+    </script>
+</body>
+</html>

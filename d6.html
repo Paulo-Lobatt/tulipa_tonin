@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>6</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background-color: #666666; /* 40% Luminosidade */
+            color: #000000;
+            font-family: 'Times New Roman', Times, serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #palavras {
+            margin-top: 30px;
+            width: 85%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .palavra {
+            position: relative;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid #000;
+            font-size: 14px;
+            cursor: default;
+            min-width: 70px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .conteudo {
+            visibility: visible;
+        }
+
+        .revelacao {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            visibility: hidden;
+        }
+
+        .palavra:hover .conteudo {
+            visibility: hidden;
+        }
+
+        .palavra:hover .revelacao {
+            visibility: visible;
+        }
+
+        #resposta-form {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        input {
+            display: block;
+            margin: 0 auto 15px auto;
+            padding: 12px;
+            width: 280px;
+            border: 1px solid #000;
+            background: rgba(255, 255, 255, 0.2);
+            text-align: center;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 16px;
+            outline: none;
+        }
+
+        button {
+            padding: 12px 40px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        button:disabled {
+            background-color: #444;
+            cursor: not-allowed;
+        }
+
+        #erro-msg {
+            margin-top: 15px;
+            color: #500000;
+            font-size: 14px;
+            display: none;
+            text-transform: uppercase;
+        }
+
+        #espera {
+            margin-top: 15px;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="palavras">
+    <div class="palavra"><div class="conteudo">a</div><div class="revelacao">1</div></div>
+    <div class="palavra"><div class="conteudo">senha</div><div class="revelacao">2</div></div>
+    <div class="palavra"><div class="conteudo">desse</div><div class="revelacao">3</div></div>
+    <div class="palavra"><div class="conteudo">enigma</div><div class="revelacao">4</div></div>
+    <div class="palavra"><div class="conteudo">é</div><div class="revelacao">5</div></div>
+    <div class="palavra"><div class="conteudo">uma</div><div class="revelacao">6</div></div>
+    <div class="palavra"><div class="conteudo">pista</div><div class="revelacao">7</div></div>
+    <div class="palavra"><div class="conteudo">do</div><div class="revelacao">8</div></div>
+    <div class="palavra"><div class="conteudo">décimo</div><div class="revelacao">9</div></div>
+    <div class="palavra"><div class="conteudo">segundo:</div><div class="revelacao">10</div></div>
+    <div class="palavra"><div class="conteudo">roblox</div><div class="revelacao">11</div></div>
+
+    <div class="palavra"><div class="conteudo">Minecraft</div><div class="revelacao">Q</div></div>
+    <div class="palavra"><div class="conteudo">Valorant</div><div class="revelacao">M</div></div>
+    <div class="palavra"><div class="conteudo">Fortnite</div><div class="revelacao">F</div></div>
+    <div class="palavra"><div class="conteudo">GTA</div><div class="revelacao">Z</div></div>
+    <div class="palavra"><div class="conteudo">CSGO</div><div class="revelacao">H</div></div>
+    <div class="palavra"><div class="conteudo">Skyrim</div><div class="revelacao">S</div></div>
+    <div class="palavra"><div class="conteudo">Dark Souls</div><div class="revelacao">D</div></div>
+    <div class="palavra"><div class="conteudo">Elden Ring</div><div class="revelacao">R</div></div>
+    <div class="palavra"><div class="conteudo">Cyberpunk</div><div class="revelacao">C</div></div>
+    <div class="palavra"><div class="conteudo">Hades</div><div class="revelacao">H</div></div>
+    <div class="palavra"><div class="conteudo">Valorant</div><div class="revelacao">A</div></div>
+
+    <div class="palavra"><div class="conteudo">vento</div><div class="revelacao">V</div></div>
+    <div class="palavra"><div class="conteudo">sombra</div><div class="revelacao">S</div></div>
+    <div class="palavra"><div class="conteudo">eco</div><div class="revelacao">E</div></div>
+    <div class="palavra"><div class="conteudo">areia</div><div class="revelacao">A</div></div>
+    <div class="palavra"><div class="conteudo">tempo</div><div class="revelacao">J</div></div>
+    <div class="palavra"><div class="conteudo">linha</div><div class="revelacao">L</div></div>
+    <div class="palavra"><div class="conteudo">queda</div><div class="revelacao">Q</div></div>
+    <div class="palavra"><div class="conteudo">ruído</div><div class="revelacao">R</div></div>
+    <div class="palavra"><div class="conteudo">porta</div><div class="revelacao">K</div></div>
+    <div class="palavra"><div class="conteudo">vazio</div><div class="revelacao">V</div></div>
+    <div class="palavra"><div class="conteudo">nono</div><div class="revelacao">R</div></div>
+    <div class="palavra"><div class="conteudo">sim</div><div class="revelacao">P</div></div>
+    <div class="palavra"><div class="conteudo">vermelho</div><div class="revelacao">V</div></div>
+</div>
+
+<div id="resposta-form">
+    <form onsubmit="verificar(); return false;">
+        <input type="text" id="inputResposta" placeholder="Digite a senha" autocomplete="off">
+        <button id="confirmar" type="submit">Confirmar</button>
+    </form>
+    <div id="erro-msg">Resposta incorreta</div>
+    <div id="espera"></div>
+</div>
+
+<script>
+    const container = document.getElementById('palavras');
+    [...container.children]
+        .sort(() => Math.random() - 0.5)
+        .forEach(el => container.appendChild(el));
+
+    let tentativas = 0;
+    let intervalo = null;
+
+    function calcularTempoEspera(t) {
+        if (t === 1) return 1;
+        if (t === 2) return 5;
+        let tempo = (t - 1) * 5;
+        return tempo > 30 ? 30 : tempo;
+    }
+
+    function verificar() {
+        const input = document.getElementById('inputResposta');
+        const botao = document.getElementById('confirmar');
+        const valor = input.value.trim().toLowerCase();
+        const erroMsg = document.getElementById('erro-msg');
+        const espera = document.getElementById('espera');
+
+        if (valor === 'roblox') {
+            window.location.href = 'd7.html';
+            return;
+        }
+
+        tentativas++;
+        erroMsg.style.display = 'block';
+
+        let segundosRestantes = calcularTempoEspera(tentativas);
+        botao.disabled = true;
+        espera.style.display = "block";
+        espera.textContent = `Aguarde ${segundosRestantes} segundo(s).`;
+
+        intervalo = setInterval(() => {
+            segundosRestantes--;
+            if (segundosRestantes <= 0) {
+                clearInterval(intervalo);
+                espera.style.display = "none";
+                botao.disabled = false;
+                input.focus();
+            } else {
+                espera.textContent = `Aguarde ${segundosRestantes} segundo(s).`;
+            }
+        }, 1000);
+    }
+</script>
+
+</body>
+</html>

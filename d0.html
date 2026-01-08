@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>0</title>
+
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        background-color: rgb(255, 255, 255);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Times New Roman', Times, serif;
+        color: #000;
+        overflow: hidden;
+    }
+
+    #caixa-dica {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        background: #f9f9f9;
+        cursor: pointer;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: none; 
+        transition: all 0.3s;
+        z-index: 100;
+    }
+
+    #caixa-dica:hover {
+        background: #000;
+        color: #fff;
+    }
+
+    .container {
+        text-align: center;
+    }
+
+    .dica-principal {
+        margin-bottom: 30px;
+        font-size: 1.2rem;
+        max-width: 500px;
+        font-style: italic;
+        line-height: 1.6;
+        letter-spacing: 1px;
+    }
+
+    input {
+        display: block;
+        margin: 0 auto 20px auto;
+        padding: 10px;
+        width: 250px;
+        border: 1px solid #000;
+        text-align: center;
+        font-family: 'Times New Roman', Times, serif;
+        outline: none;
+    }
+
+    button {
+        padding: 12px 40px;
+        font-size: 14px;
+        cursor: pointer;
+        background-color: #000;
+        color: #fff;
+        border: none;
+        border-radius: 0;
+        user-select: none;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+</style>
+</head>
+<body>
+
+<div id="caixa-dica" onclick="revelarDica()">Ajuda?</div>
+
+<div class="container">
+    <div class="dica-principal">
+        "O caminho óbvio é uma cortina para os olhos apressados. A verdadeira intenção não se revela ao toque comum, mas àquele que questiona a natureza do agir. Sempre há mais."
+    </div>
+
+    <input type="text" id="senhaInput" placeholder="A senha é: senha" autocomplete="off">
+
+    <button id="avancar">Avançar</button>
+</div>
+
+<script>
+    const botao = document.getElementById("avancar");
+    const campoSenha = document.getElementById("senhaInput");
+    const caixaDica = document.getElementById("caixa-dica");
+    let cliques = 0;
+
+    // Clique esquerdo apenas incrementa o contador de "falhas" para mostrar a dica
+    botao.addEventListener("click", (e) => {
+        e.preventDefault();
+        cliques++;
+        if (cliques >= 5) {
+            caixaDica.style.display = "block";
+        }
+    });
+
+    // Função da Dica
+    function revelarDica() {
+        const confirmacao = confirm("Isto só deve ser usado pelos covardes e por aqueles que abdicaram de qualquer autoestima. Prossiga com cuidado.\n\nDeseja mesmo assim ver a dica?");
+        if (confirmacao) {
+            alert("A mão que aponta o caminho não é a mesma que abre a passagem. Busque o segundo comando, o que se esconde ao lado da sua vontade.");
+        }
+    }
+
+    // Enter não faz nada
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+        }
+    });
+
+    // A VERDADEIRA CONDIÇÃO DE VITÓRIA:
+    // Deve ter "senha" escrito E usar o clique direito (contextmenu)
+    botao.addEventListener("contextmenu", (e) => {
+        e.preventDefault(); 
+        if (campoSenha.value.toLowerCase() === "senha") {
+            window.location.href = "d1.html";
+        }
+    });
+</script>
+
+</body>
+</html>

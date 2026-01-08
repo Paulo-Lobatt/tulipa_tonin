@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>2</title>
+
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        background-color: #cccccc; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Times New Roman', Times, serif;
+        color: #000;
+        overflow: hidden;
+    }
+
+    #caixa-dica {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        padding: 10px 15px;
+        border: 1px solid #999;
+        background: #eee;
+        cursor: pointer;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: none; 
+        z-index: 50; /* Abaixo da pista de zoom se necessário */
+        transition: opacity 0.3s;
+    }
+
+    .container {
+        text-align: center;
+        max-width: 550px;
+        padding: 20px;
+        z-index: 100;
+    }
+
+    .pista-principal {
+        font-style: italic;
+        font-size: 1.25rem;
+        line-height: 1.6;
+        margin-bottom: 30px;
+    }
+
+    #pista-zoom {
+        display: none;
+        color: #700;
+        font-weight: bold;
+        margin-bottom: 25px;
+        font-size: 0.95rem;
+        letter-spacing: 1px;
+    }
+
+    input {
+        display: block;
+        margin: 0 auto 20px auto;
+        padding: 12px;
+        width: 280px;
+        border: 1px solid #000;
+        background: rgba(255, 255, 255, 0.2);
+        text-align: center;
+        font-family: 'Times New Roman', Times, serif;
+        outline: none;
+    }
+
+    button {
+        padding: 12px 40px;
+        font-size: 14px;
+        cursor: pointer;
+        background-color: #000;
+        color: #fff;
+        border: none;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    button:disabled {
+        background-color: #777;
+        cursor: not-allowed;
+    }
+
+    .erro {
+        margin-top: 15px;
+        color: #b00000;
+        font-size: 14px;
+        display: none;
+        text-transform: uppercase;
+    }
+
+    .espera {
+        margin-top: 15px;
+        font-weight: bold;
+        display: none;
+    }
+</style>
+</head>
+<body>
+
+<div id="caixa-dica" onclick="revelarDica()">Ajuda?</div>
+
+<div class="container">
+    <div class="pista-principal">
+        "Seus olhos são traidores; aceitam o que lhes é dado sem questionar. Apenas quando você mergulhar no vazio das letras, o caminho do raio se mostrará."  
+    </div>
+
+    <div id="pista-zoom">
+        "Para o Velocista Escarlate, a pressa é o vício que o destino traz, <br>
+        Um monstro que rouba a rapidez e nunca encontra a paz. <br>
+        Em delírio de onipotência, cada corredor ele quer drenar, <br>
+        Pois sua mente e corpo a droga insiste em devorar."
+    </div>
+
+    <form onsubmit="verificarResposta(); return false;">
+        <input type="text" id="resposta" placeholder="Digite a resposta" autocomplete="off">
+        <button id="confirmar" type="submit">Prosseguir</button>
+    </form>
+
+    <div id="erro" class="erro">Tente novamente.</div>
+    <div id="espera" class="espera"></div>
+</div>
+
+<script>
+    let tentativas = 0;
+    let intervalo = null;
+    const pistaZoom = document.getElementById("pista-zoom");
+    const caixaDica = document.getElementById("caixa-dica");
+
+    function verificarZoom() {
+        const zoom = window.devicePixelRatio;
+        if (zoom >= 5.00) {
+            pistaZoom.style.display = "block";
+            // Se o zoom estiver alto, a caixa de ajuda fica quase invisível para não atrapalhar
+            caixaDica.style.opacity = "0.1";
+        } else {
+            pistaZoom.style.display = "none";
+            caixaDica.style.opacity = "1";
+        }
+    }
+
+    window.addEventListener("resize", verificarZoom);
+    verificarZoom();
+
+    function calcularTempoEspera(tentativas) {
+        if (tentativas === 1) return 1;
+        if (tentativas === 2) return 5;
+        let tempo = (tentativas - 1) * 5;
+        return tempo > 30 ? 30 : tempo;
+    }
+
+    function verificarResposta() {
+        const input = document.getElementById("resposta");
+        const botao = document.getElementById("confirmar");
+        const erro = document.getElementById("erro");
+        const espera = document.getElementById("espera");
+
+        if (input.value.trim().toLowerCase() === "zoom") {
+            window.location.href = "d3.html";
+            return;
+        }
+
+        tentativas++;
+        erro.style.display = "block";
+        
+        if (tentativas >= 5) {
+            caixaDica.style.display = "block";
+        }
+
+        let segundosRestantes = calcularTempoEspera(tentativas);
+        botao.disabled = true;
+        espera.style.display = "block";
+        espera.textContent = `Aguarde ${segundosRestantes} segundo(s).`;
+
+        intervalo = setInterval(() => {
+            segundosRestantes--;
+            if (segundosRestantes <= 0) {
+                clearInterval(intervalo);
+                espera.style.display = "none";
+                botao.disabled = false;
+                input.focus();
+            } else {
+                espera.textContent = `Aguarde ${segundosRestantes} segundo(s).`;
+            }
+        }, 1000);
+    }
+
+    function revelarDica() {
+        const confirmacao = confirm("Isto só deve ser usado pelos covardes e por aqueles que abdicaram de qualquer autoestima. Prossiga com cuidado.\n\nDeseja mesmo assim ver a dica?");
+        if (confirmacao) {
+            alert("Às vezes, para enxergar algo, é preciso olhar mais de perto.");
+        }
+    }
+</script>
+
+</body>
+</html>

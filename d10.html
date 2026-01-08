@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>10</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background-color: #000000; /* Escuridão Total */
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Times New Roman', Times, serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        /* Frase visível, mas sombria */
+        .pista-visivel {
+            color: #222; /* Quase invisível, mas legível com esforço */
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+
+        /* Dica invisível (Preto no Preto) - Abaixo das senhas */
+        .dica-nas-sombras {
+            margin-top: 40px;
+            color: #000000;
+            font-style: italic;
+            font-size: 1.2rem;
+            user-select: all;
+            cursor: text;
+        }
+
+        .dica-nas-sombras::selection {
+            background: #ffffff;
+            color: #000000;
+        }
+
+        input {
+            display: block;
+            margin: 0 auto 15px auto;
+            padding: 15px; /* Aumentado para legibilidade */
+            width: 320px;
+            border: 1px solid #1a1a1a;
+            background: rgba(255, 255, 255, 0.02);
+            text-align: center;
+            font-family: 'Times New Roman', Times, serif;
+            color: #ffffff;
+            outline: none;
+            font-size: 1.2rem; /* Fonte maior */
+        }
+
+        button {
+            padding: 15px 50px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 10px;
+        }
+
+        button:disabled {
+            background-color: #1a1a1a;
+            color: #333;
+            cursor: not-allowed;
+        }
+
+        .erro-msg {
+            margin-top: 20px;
+            color: #330000;
+            font-size: 14px;
+            display: none;
+            text-transform: uppercase;
+        }
+
+        .espera {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #222;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="pista-visivel">
+            O que os olhos ignoram, a alma deve buscar.<br>
+            A verdade repousa no que a luz não ousa tocar.
+        </div>
+
+        <form onsubmit="verificarResposta(); return false;">
+            <input type="text" id="input1" placeholder="Fragmento I" autocomplete="off">
+            <input type="text" id="input2" placeholder="Fragmento II" autocomplete="off">
+            <button id="confirmar" type="submit">Prosseguir</button>
+        </form>
+
+        <div class="dica-nas-sombras">
+            "A sombra passada o dobro de codigos ela tem, mande pra ela isso: "GHN-E3MC2" e deixe-a lhe mostrar o que lhe convém"
+        </div>
+
+        <div id="erro-msg" class="erro-msg">Incompleto.</div>
+        <div id="espera" class="espera"></div>
+    </div>
+
+    <script>
+        // Agora as senhas na lista estão em minúsculas para bater com o .toLowerCase()
+        const codigosCorretos = ["j4pm2-hx", "ra-nzrgwu9"]; 
+        let tentativas = 0;
+        let intervalo = null;
+
+        function calcularTempoEspera(t) {
+            if (t === 1) return 1;
+            if (t === 2) return 10;
+            if (t === 3) return 60;
+            return (t - 2) * 60;
+        }
+
+        function verificarResposta() {
+            const in1 = document.getElementById("input1").value.trim().toLowerCase();
+            const in2 = document.getElementById("input2").value.trim().toLowerCase();
+            const botao = document.getElementById("confirmar");
+            const erroMsg = document.getElementById("erro-msg");
+            const espera = document.getElementById("espera");
+
+            // Verifica se ambos os inputs estão na lista e se não são repetidos
+            const acertou = (codigosCorretos.includes(in1) && 
+                            codigosCorretos.includes(in2) && 
+                            in1 !== in2);
+
+            if (acertou) {
+                window.location.href = "d11.html";
+                return;
+            }
+
+            // Lógica de erro e penalidade
+            tentativas++;
+            erroMsg.style.display = "block";
+
+            let segundosRestantes = calcularTempoEspera(tentativas);
+            botao.disabled = true;
+            espera.style.display = "block";
+            espera.textContent = `Paciência: ${segundosRestantes}s.`;
+
+            intervalo = setInterval(() => {
+                segundosRestantes--;
+                if (segundosRestantes <= 0) {
+                    clearInterval(intervalo);
+                    espera.style.display = "none";
+                    botao.disabled = false;
+                } else {
+                    espera.textContent = `Paciência: ${segundosRestantes}s.`;
+                }
+            }, 1000);
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>O Desafio</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background-color: #0f0f0f;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Times New Roman', Times, serif; /* Alterado para manter a estética solene */
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            letter-spacing: 4px;
+            font-weight: lighter;
+            text-transform: uppercase;
+        }
+
+        p {
+            line-height: 1.8;
+            opacity: 0.8;
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+
+        button {
+            margin-top: 40px;
+            padding: 12px 40px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid #333; /* Estética mais refinada */
+            border-radius: 0; 
+            background-color: transparent;
+            color: #ffffff;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.5s ease;
+        }
+
+        button:hover {
+            background-color: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>O Desafio</h1>
+
+        <p>
+            Diante de ti estende-se um caminho pavimentado por dúvidas.<br>
+            A visão trai os apressados; a mente, os imprudentes. 
+        </p>
+
+        <p>
+            Nem todos as névoas se dissipam pelo ímpeto da força.<br>
+            Há momentos em que a maior sabedoria reside na imobilidade da espera.
+        </p>
+
+        <button onclick="iniciarJogo()">Desperte</button>
+    </div>
+
+    <script>
+        function iniciarJogo() {
+            window.location.href = "d0.html";
+        }
+    </script>
+</body>
+</html>

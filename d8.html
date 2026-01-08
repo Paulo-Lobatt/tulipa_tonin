@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>8</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background-color: #333333; /* 20% Luminosidade */
+            color: #cccccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Times New Roman', Times, serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        .enigma {
+            font-style: italic;
+            font-size: 1.4rem;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            transition: opacity 1s;
+        }
+
+        #botao-oculto {
+            opacity: 0;
+            visibility: hidden;
+            padding: 12px 40px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        #botao-oculto.visivel {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .aviso {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="enigma" id="texto-enigma">
+            Sua persistência é notável, mas aqui os caminhos se apagam.<br>
+            A resposta não está no que você digita, mas na sua intenção de desistir.<br>
+            Abandone a busca e talvez a saída se revele diante do seu adeus.
+        </div>
+
+        <button id="botao-oculto" onclick="prosseguir()">Prosseguir</button>
+        
+        <div class="aviso" id="subtexto">O esforço é inútil agora.</div>
+    </div>
+
+    <script>
+        const btn = document.getElementById('botao-oculto');
+        const enigma = document.getElementById('texto-enigma');
+        const subtexto = document.getElementById('subtexto');
+
+        document.addEventListener('mouseleave', (e) => {
+            // Gatilho: Topo da página (Y <= 0) e Canto Superior Direito (X > 70% da largura)
+            const larguraGatilho = window.innerWidth * 0.7;
+
+            if (e.clientY <= 0 && e.clientX > larguraGatilho) {
+                revelarCaminho();
+            }
+        });
+
+        function revelarCaminho() {
+            if (!btn.classList.contains('visivel')) {
+                btn.classList.add('visivel');
+                enigma.style.opacity = "0.5";
+                enigma.innerHTML = "O blefe foi aceito. A porta se abriu.";
+                subtexto.textContent = "Não olhe para trás.";
+            }
+        }
+
+        function prosseguir() {
+            window.location.href = "d9.html";
+        }
+    </script>
+
+</body>
+</html>

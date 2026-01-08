@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>3</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background-color: #b3b3b3; 
+            color: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Times New Roman', Times, serif;
+            overflow: hidden;
+        }
+
+        #caixa-dica {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 15px;
+            border: 1px solid #777;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: none; 
+            z-index: 100;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        .enigma {
+            font-style: italic;
+            font-size: 1.25rem;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            white-space: pre-line; /* Mantém as quebras de linha da frase */
+        }
+
+        input {
+            padding: 12px;
+            width: 280px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid #000;
+            outline: none;
+            text-align: center;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        button {
+            padding: 12px 40px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        button:disabled {
+            background-color: #777;
+            cursor: not-allowed;
+        }
+
+        .erro-msg {
+            margin-top: 15px;
+            color: #800000;
+            font-size: 14px;
+            display: none;
+            text-transform: uppercase;
+        }
+
+        .espera {
+            margin-top: 15px;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="caixa-dica" onclick="revelarDica()">Ajuda?</div>
+
+    <div class="container">
+        <div class="enigma">
+            A hesitação é a derrota, ele bem o sabe,
+            No fio da lâmina, onde o erro não cabe.
+            Onde o sangue se torna a tinta do obreiro,
+            Ele é o vulto antigo, e o marco primeiro.
+            Se a falha emerge e o fio se rompe,
+            No mudo isolamento, o ódio o corrompe.
+        </div>
+
+        <form onsubmit="verificarResposta(); return false;">
+            <input type="text" id="resposta" placeholder="Digite a resposta" autocomplete="off">
+            <br>
+            <button id="confirmar" type="submit">Prosseguir</button>
+        </form>
+
+        <div id="erro-msg" class="erro-msg">Tente novamente.</div>
+        <div id="espera" class="espera"></div>
+    </div>
+
+    <script>
+        const respostaCorreta = "notry"; 
+        let tentativas = 0;
+        let intervalo = null;
+
+        const caixaDica = document.getElementById("caixa-dica");
+
+        function calcularTempoEspera(t) {
+            if (t === 1) return 1;
+            if (t === 2) return 5;
+            let tempo = (t - 1) * 5;
+            return tempo > 30 ? 30 : tempo;
+        }
+
+        function verificarResposta() {
+            const input = document.getElementById("resposta");
+            const botao = document.getElementById("confirmar");
+            const erroMsg = document.getElementById("erro-msg");
+            const espera = document.getElementById("espera");
+
+            if (input.value.trim().toLowerCase() === respostaCorreta) {
+                window.location.href = "d4.html";
+                return;
+            }
+
+            tentativas++;
+            erroMsg.style.display = "block";
+
+            if (tentativas >= 5) {
+                caixaDica.style.display = "block";
+            }
+
+            let segundosRestantes = calcularTempoEspera(tentativas);
+            botao.disabled = true;
+            espera.style.display = "block";
+            espera.textContent = `Aguarde ${segundosRestantes} segundo(s).`;
+
+            intervalo = setInterval(() => {
+                segundosRestantes--;
+                if (segundosRestantes <= 0) {
+                    clearInterval(intervalo);
+                    espera.style.display = "none";
+                    botao.disabled = false;
+                    input.focus();
+                } else {
+                    espera.textContent = `Aguarde ${segundosRestantes} segundo(s).`;
+                }
+            }, 1000);
+        }
+
+        function revelarDica() {
+            confirm("Isto só deve ser usado pelos covardes e por aqueles que abdicaram de qualquer autoestima. Prossiga com cuidado.\n\nNenhuma dica será dada aqui. nem sempre se tolera a fraqueza.");
+        }
+    </script>
+
+</body>
+</html>

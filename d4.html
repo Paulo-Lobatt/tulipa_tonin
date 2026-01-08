@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>4</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 200vh; /* Força o scroll para esconder a charada */
+            background-color: #999999; /* 60% Luminosidade */
+            color: #000000;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        #caixa-dica {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 15px;
+            border: 1px solid #555;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: none; 
+            z-index: 100;
+        }
+
+        .top {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        input {
+            display: block;
+            margin: 0 auto 20px auto;
+            padding: 12px;
+            width: 280px;
+            border: 1px solid #000;
+            background: rgba(255, 255, 255, 0.2);
+            text-align: center;
+            font-family: 'Times New Roman', Times, serif;
+            outline: none;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 12px 40px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        button:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+
+        .erro-msg {
+            margin-top: 15px;
+            color: #700000;
+            font-size: 14px;
+            display: none;
+            text-transform: uppercase;
+        }
+
+        .espera {
+            margin-top: 15px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .charada-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .charada-texto {
+            font-style: italic;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            max-width: 500px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="caixa-dica" onclick="revelarDica()">Ajuda?</div>
+
+    <div class="top">
+        <div class="container">
+            <form onsubmit="verificarResposta(); return false;">
+                <input type="text" id="resposta" placeholder="Digite sua resposta" autocomplete="off">
+                <button id="confirmar" type="submit">Prosseguir</button>
+            </form>
+
+            <div id="erro-msg" class="erro-msg">Resposta incorreta.</div>
+            <div id="espera" class="espera"></div>
+        </div>
+    </div>
+
+    <div class="charada-container">
+        <div class="charada-texto">
+            "Fui forjada em gênio, mas não tenho coração,
+
+            Abandonada no chão para cumprir minha missão.
+
+            Enquanto o dono avança, meu olho se desdobra,
+
+            O agente me solta, mas o destino me aposta:
+
+            Qual é a única arma que vigia as suas costas?"
+        </div>
+    </div>
+
+    <script>
+        const respostaCorreta = "torreta";
+        let tentativas = 0;
+        let intervalo = null;
+
+        function calcularTempoEspera(t) {
+            if (t === 1) return 1;
+            if (t === 2) return 5;
+            let tempo = (t - 1) * 5;
+            return tempo > 30 ? 30 : tempo;
+        }
+
+        function verificarResposta() {
+            const input = document.getElementById("resposta");
+            const botao = document.getElementById("confirmar");
+            const erroMsg = document.getElementById("erro-msg");
+            const espera = document.getElementById("espera");
+            const caixaDica = document.getElementById("caixa-dica");
+
+            if (input.value.trim().toLowerCase() === respostaCorreta) {
+                window.location.href = "d5.html";
+                return;
+            }
+
+            tentativas++;
+            erroMsg.style.display = "block";
+
+            if (tentativas >= 5) {
+                caixaDica.style.display = "block";
+            }
+
+            let segundosRestantes = calcularTempoEspera(tentativas);
+            botao.disabled = true;
+            espera.style.display = "block";
+            espera.textContent = `Aguarde ${segundosRestantes} segundo(s).`;
+
+            intervalo = setInterval(() => {
+                segundosRestantes--;
+                if (segundosRestantes <= 0) {
+                    clearInterval(intervalo);
+                    espera.style.display = "none";
+                    botao.disabled = false;
+                    input.focus();
+                } else {
+                    espera.textContent = `Aguarde ${segundosRestantes} segundo(s).`;
+                }
+            }, 1000);
+        }
+
+        function revelarDica() {
+            confirm("Isto só deve ser usado pelos covardes e por aqueles que abdicaram de qualquer autoestima.\n\nExplore o abismo da página. O que você busca não está no topo.");
+        }
+    </script>
+
+</body>
+</html>

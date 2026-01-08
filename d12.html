@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>12</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background-color: #000000; /* Full Black */
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Times New Roman', Times, serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        .frase-container {
+            height: 80px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .frase {
+            font-size: 1.6rem;
+            font-style: italic;
+            transition: opacity 1s ease;
+        }
+
+        #codigo-revelado {
+            font-size: 1.8rem;
+            color: #ffffff;
+            letter-spacing: 8px;
+            font-weight: bold;
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        input {
+            display: block;
+            margin: 0 auto 15px auto;
+            padding: 15px;
+            width: 320px;
+            border: 1px solid #222;
+            background: rgba(255, 255, 255, 0.02);
+            text-align: center;
+            font-family: 'Times New Roman', Times, serif;
+            color: #ffffff;
+            outline: none;
+            font-size: 1.2rem;
+        }
+
+        button {
+            padding: 12px 45px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .erro {
+            margin-top: 15px;
+            color: #660000;
+            font-size: 14px;
+            display: none;
+            text-transform: uppercase;
+        }
+
+        .dica {
+            margin-top: 40px;
+            color: #444; 
+            font-style: italic;
+            font-size: 1rem;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="frase-container">
+        <div id="texto-principal" class="frase">
+            "No silêncio do agir, o caminho se deixa ver."
+        </div>
+        <div id="codigo-revelado">JEY-DNQLF</div>
+    </div>
+
+    <form onsubmit="verificar(); return false;">
+        <input type="text" id="resposta" placeholder="O que busca?" autocomplete="off">
+        <button type="submit">Confirmar</button>
+    </form>
+
+    <div id="erro" class="erro"></div>
+    <div id="dica" class="dica">
+        você o joga para impressionar, mas só poderá prosseguir depois do código resgatar.
+    </div>
+</div>
+
+<script>
+    const RESPOSTA_CORRETA = "dress to impress";
+    let codigoFoiRevelado = false;
+    
+    const textoPrincipal = document.getElementById("texto-principal");
+    const codigoRevelado = document.getElementById("codigo-revelado");
+    const dicaElement = document.getElementById("dica");
+    const erroElement = document.getElementById("erro");
+
+    let timerDica = null;
+    let timerCodigo = null;
+
+    function resetarInatividade() {
+        // Se o código já foi revelado, não resetamos mais nada da parte superior
+        if (codigoFoiRevelado) {
+            dicaElement.style.opacity = "0"; // A dica some ao mexer, mas o código fica
+            return;
+        }
+
+        // Reset visual da dica
+        dicaElement.style.opacity = "0";
+        erroElement.style.display = "none";
+
+        clearTimeout(timerDica);
+        clearTimeout(timerCodigo);
+        
+        // 30 segundos para a dica aparecer
+        timerDica = setTimeout(() => {
+            dicaElement.style.opacity = "1";
+        }, 2000);
+
+        // 60 segundos para o código aparecer
+        timerCodigo = setTimeout(() => {
+            revelarCodigo();
+        }, 4000);
+    }
+
+    function revelarCodigo() {
+        codigoFoiRevelado = true;
+        textoPrincipal.style.opacity = "0";
+        setTimeout(() => {
+            textoPrincipal.style.display = "none";
+            codigoRevelado.style.display = "block";
+            setTimeout(() => {
+                codigoRevelado.style.opacity = "1";
+            }, 100);
+        }, 1000);
+    }
+
+    function verificar() {
+        const valor = document.getElementById("resposta").value.trim().toLowerCase();
+
+        if (!codigoFoiRevelado) {
+            erroElement.textContent = "Você ainda não obteve a verdade das sombras.";
+            erroElement.style.display = "block";
+            return;
+        }
+
+        if (valor === RESPOSTA_CORRETA) {
+            window.location.href = "d13.html";
+        } else {
+            erroElement.textContent = "Tente novamente.";
+            erroElement.style.display = "block";
+        }
+    }
+
+    ["mousemove", "keydown", "mousedown", "wheel", "touchstart"].forEach(evento => {
+        document.addEventListener(evento, resetarInatividade);
+    });
+
+    // Início imediato dos timers ao carregar
+    resetarInatividade();
+</script>
+
+</body>
+</html>

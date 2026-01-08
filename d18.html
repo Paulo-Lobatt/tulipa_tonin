@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D18</title>
+    <style>
+        body {
+            margin: 0;
+            height: 250vh; 
+            background-color: #000000;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 30vh; 
+            font-family: 'Times New Roman', serif;
+            overflow-x: hidden;
+            cursor: none; 
+        }
+
+        #torch-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            background: radial-gradient(circle 100px at var(--x) var(--y), rgba(255,255,255,0.08) 0%, rgba(0,0,0,1) 100%);
+            z-index: 5;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 650px;
+            padding: 20px;
+            position: sticky;
+            top: 20vh;
+            z-index: 10;
+        }
+
+        .enigma-texto {
+            font-style: italic;
+            font-size: 1.5rem;
+            line-height: 2.2;
+            margin-bottom: 50px;
+            user-select: none;
+            letter-spacing: 1px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .word {
+            transition: color 0.3s ease;
+            color: #000000; 
+        }
+
+        input {
+            padding: 12px;
+            width: 280px;
+            font-size: 16px;
+            background-color: #050505;
+            border: 1px solid #1a1a1a;
+            color: #eee; 
+            text-align: center;
+            outline: none;
+            margin-bottom: 25px;
+            font-family: monospace;
+            z-index: 11;
+        }
+
+        button {
+            display: block;
+            margin: 0 auto;
+            padding: 12px 40px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid #333;
+            background-color: transparent;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: all 0.4s;
+            z-index: 11;
+        }
+
+        button:hover {
+            color: #fff;
+            border-color: #fff;
+            background-color: #111;
+        }
+
+        #erro {
+            margin-top: 25px;
+            color: #600;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            visibility: hidden;
+        }
+
+        .final-pista {
+            margin-top: 150vh;
+            color: #000;
+            font-size: 10px;
+            z-index: 4;
+        }
+    </style>
+</head>
+<body onmousemove="handleMouseMove(event)">
+
+    <div id="torch-bg"></div>
+
+    <div class="container">
+        <div class="enigma-texto" id="enigma-container"></div>
+
+        <form id="formEnigma" onkeydown="return event.key != 'Enter';">
+            <input type="text" id="resposta" value="alma" autocomplete="off">
+            <button type="button" onclick="verificar()">ATRAVESSAR A NÉVOA</button>
+        </form>
+
+        <div id="erro">tente, tente, tente, tente....</div>
+    </div>
+
+    <div class="final-pista word">não há nada aqui embaixo além do silêncio.</div>
+
+    <script>
+        // Texto corrigido conforme Opção 3
+        const textoOriginal = "A fogueira consome o que você foi, e o tempo devora o que você tem. Resta apenas uma carcaça sem nome, sem almas e sem humanidade. Para atravessar a névoa, você deve abraçar a maldição. Onde outrora havia um nome, que agora reine apenas o fardo dos amaldiçoados; apresente apenas o que resta de um Undead que abraçou o destino que lhe foi dado.";
+        
+        const container = document.getElementById('enigma-container');
+        
+        textoOriginal.split(" ").forEach(palavra => {
+            const span = document.createElement('span');
+            span.textContent = palavra;
+            span.className = 'word';
+            container.appendChild(span);
+        });
+
+        function handleMouseMove(e) {
+            document.body.style.setProperty('--x', e.clientX + 'px');
+            document.body.style.setProperty('--y', e.clientY + 'px');
+
+            document.querySelectorAll('.word').forEach(word => {
+                const rect = word.getBoundingClientRect();
+                const wordX = rect.left + rect.width / 2;
+                const wordY = rect.top + rect.height / 2;
+                const distance = Math.sqrt(Math.pow(e.clientX - wordX, 2) + Math.pow(e.clientY - wordY, 2));
+
+                if (distance < 100) {
+                    word.style.color = "#ffffff";
+                } else {
+                    word.style.color = "#000000";
+                }
+            });
+        }
+
+        function verificar() {
+            const campo = document.getElementById("resposta");
+            const erro = document.getElementById("erro");
+            
+            // A solução continua sendo deixar o campo vazio
+            if (campo.value.trim() === "") {
+                window.location.href = "d19.html";
+            } else {
+                erro.style.visibility = "visible";
+                setTimeout(() => {
+                    erro.style.visibility = "hidden";
+                }, 2000);
+            }
+        }
+    </script>
+</body>
+</html>

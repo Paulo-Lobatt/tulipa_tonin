@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>15</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background-color: #000000; /* Full Black */
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Times New Roman', Times, serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        /* Padronizado conforme d11 */
+        .enigma {
+            font-style: italic;
+            font-size: 1.25rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            white-space: pre-line;
+            color: #ffffff;
+        }
+
+        input {
+            display: block;
+            margin: 0 auto 15px auto;
+            padding: 12px;
+            width: 280px;
+            border: 1px solid #333;
+            background: rgba(255, 255, 255, 0.05);
+            text-align: center;
+            font-family: 'Times New Roman', Times, serif;
+            color: #ffffff;
+            outline: none;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 12px 40px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        button:disabled {
+            background-color: #222;
+            color: #555;
+            cursor: not-allowed;
+        }
+
+        .erro {
+            margin-top: 15px;
+            color: #550000;
+            font-size: 14px;
+            display: none;
+            text-transform: uppercase;
+        }
+
+        .espera {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #333;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="enigma">
+            Abandonou o antigo gramado pelo pó do metal,
+            Entre o choque do solo e o trauma fatal.
+            Um movimento cego, um corte no ar,
+            Ele quebra a parede para não ter que lembrar.
+            O falante que flicka sob a luz do monitor
+            Quem é esse que tantos demônios matou?
+        </div>
+
+        <form onsubmit="verificarResposta(); return false;">
+            <input type="text" id="resposta" placeholder="Identifique-o" autocomplete="off">
+            <button id="confirmar" type="submit">Confirmar</button>
+        </form>
+
+        <div id="erro" class="erro">A resposta permanece oculta.</div>
+        <div id="espera" class="espera"></div>
+    </div>
+
+    <script>
+        const respostaCorreta = "ludin";
+        let tentativas = 0;
+        let intervalo = null;
+
+        function calcularTempoEspera(t) {
+            if (t === 1) return 1;
+            if (t === 2) return 10;
+            if (t === 3) return 60;
+            return (t - 2) * 60;
+        }
+
+        function verificarResposta() {
+            const input = document.getElementById("resposta");
+            const botao = document.getElementById("confirmar");
+            const erro = document.getElementById("erro");
+            const espera = document.getElementById("espera");
+
+            const respostaUsuario = input.value.trim().toLowerCase();
+
+            if (respostaUsuario === respostaCorreta) {
+                window.location.href = "d16.html";
+                return;
+            }
+
+            tentativas++;
+            erro.style.display = "block";
+
+            let segundosRestantes = calcularTempoEspera(tentativas);
+
+            botao.disabled = true;
+            espera.style.display = "block";
+            espera.textContent = `Aguarde ${segundosRestantes} segundo(s).`;
+
+            intervalo = setInterval(() => {
+                segundosRestantes--;
+
+                if (segundosRestantes <= 0) {
+                    clearInterval(intervalo);
+                    espera.style.display = "none";
+                    botao.disabled = false;
+                    input.focus();
+                } else {
+                    espera.textContent = `Aguarde ${segundosRestantes} segundo(s).`;
+                }
+            }, 1000);
+        }
+    </script>
+
+</body>
+</html>

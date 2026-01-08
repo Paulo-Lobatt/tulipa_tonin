@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Enigma 16</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    background: #000;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 650px;
+    max-width: 95%;
+}
+
+.titulo {
+    color: #aaa;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 15px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin-bottom: 15px;
+    background: #111;
+    color: #fff;
+    border: 1px solid #444;
+}
+
+button {
+    padding: 10px 25px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    background: #fff;
+    color: #000;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.erro {
+    color: #ff5555;
+    margin-bottom: 15px;
+    display: none;
+}
+
+.regra {
+    background: #1a1a1a;
+    border-left: 5px solid #660000;
+    padding: 10px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    display: none;
+}
+
+.regra.ok {
+    background: #1f3d1f;
+    border-left-color: #00aa00;
+}
+
+#avancar {
+    display: none;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="titulo">
+        as vezes a senha é qualquer uma, desde que siga algumas regras
+    </div>
+
+    <input type="text" id="senha" placeholder="Digite sua senha">
+    <button onclick="verificar()">Confirmar</button>
+
+    <div id="erro" class="erro">
+        A senha não satisfaz todas as regras atuais.
+    </div>
+
+    <div id="regras"></div>
+
+    <button id="avancar" onclick="irProximo()">Avançar</button>
+</div>
+
+<script>
+const regras = [
+    s => s.length >= 8,
+    s => /[A-Z]/.test(s),
+    s => /\d/.test(s),
+    s => /[^a-zA-Z0-9]/.test(s),
+    s => !/\s/.test(s),
+    s => s.length % 2 === 0,
+    s => /^[A-Z]/.test(s),
+    s => /\d{2}/.test(s),
+    s => (s.match(/[^a-zA-Z0-9]/g) || []).length === 2,
+    s => (s.match(/\d/g) || []).length >= 3,
+    s => (s.match(/\d/g) || []).map(Number).reduce((a,b)=>a+b,0) >= 15,
+    s => {
+        const soma = (s.match(/\d/g) || []).map(Number).reduce((a,b)=>a+b,0);
+        return soma % 3 === 0;
+    },
+    s => /(.)\1/.test(s),
+    s => (s.match(/[a-zA-Z]/g) || []).length % 2 === 1,
+    s => (s.match(/\d/g) || []).some(n => ["2","3","5","7"].includes(n)),
+    s => (s.match(/_/g) || []).length === 1,
+    s => {
+        const nums = s.match(/\d/g);
+        if (!nums || nums.length < 2) return false;
+        return Number(nums[0]) > Number(nums[nums.length - 1]);
+    },
+    s => {
+        const i = s.search(/[^a-zA-Z0-9]/);
+        return i !== -1 && i % 2 === 0;
+    },
+    s => {
+        const letras = s.toLowerCase().replace(/[^a-z]/g, "");
+        for (let i = 0; i < letras.length - 2; i++) {
+            const a = letras.charCodeAt(i);
+            if (
+                letras.charCodeAt(i+1) === a+1 &&
+                letras.charCodeAt(i+2) === a+2
+            ) return true;
+        }
+        return false;
+    },
+    s => s.length % 4 === 0
+];
+
+const textos = [
+    "Regra 1: a senha deve ter pelo menos 8 caracteres",
+    "Regra 2: deve conter pelo menos uma letra maiúscula",
+    "Regra 3: deve conter pelo menos um número",
+    "Regra 4: deve conter pelo menos um caractere especial",
+    "Regra 5: a senha não pode conter espaços",
+    "Regra 6: o comprimento da senha deve ser par",
+    "Regra 7: a senha deve começar com uma letra maiúscula",
+    "Regra 8: deve conter dois números consecutivos",
+    "Regra 9: deve conter exatamente dois caracteres especiais",
+    "Regra 10: deve conter pelo menos três números",
+    "Regra 11: a soma de todos os números deve ser no mínimo 15",
+    "Regra 12: a soma dos números deve ser divisível por 3",
+    "Regra 13: deve conter uma letra repetida duas vezes seguidas",
+    "Regra 14: o número total de letras deve ser ímpar",
+    "Regra 15: deve conter pelo menos um número primo",
+    "Regra 16: deve conter exatamente um underscore (_)",
+    "Regra 17: o primeiro número deve ser maior que o último",
+    "Regra 18: o primeiro caractere especial deve estar em uma posição par",
+    "Regra 19: deve conter uma sequência crescente de três letras",
+    "Regra 20: o comprimento total da senha deve ser divisível por 4"
+];
+
+let regraAtual = 0;
+const regrasDiv = document.getElementById("regras");
+const erro = document.getElementById("erro");
+const avancar = document.getElementById("avancar");
+
+textos.forEach((t, i) => {
+    const d = document.createElement("div");
+    d.className = "regra";
+    d.id = "regra" + i;
+    d.textContent = t;
+    regrasDiv.appendChild(d);
+});
+
+function verificar() {
+    const senha = document.getElementById("senha").value;
+    erro.style.display = "none";
+
+    for (let i = 0; i < regraAtual; i++) {
+        const div = document.getElementById("regra" + i);
+        if (regras[i](senha)) {
+            div.classList.add("ok");
+        } else {
+            div.classList.remove("ok");
+            erro.style.display = "block";
+            return;
+        }
+    }
+
+    if (regraAtual < regras.length) {
+        const div = document.getElementById("regra" + regraAtual);
+        div.style.display = "block";
+
+        if (regras[regraAtual](senha)) {
+            div.classList.add("ok");
+            regraAtual++;
+        } else {
+            div.classList.remove("ok");
+            erro.style.display = "block";
+            return;
+        }
+    }
+
+    if (regraAtual === regras.length) {
+        avancar.style.display = "block";
+    }
+}
+
+function irProximo() {
+    window.location.href = "d17.html";
+}
+</script>
+
+</body>
+</html>

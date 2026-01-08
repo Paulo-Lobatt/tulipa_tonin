@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>7</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background-color: #4d4d4d; /* 30% Luminosidade */
+            color: #ffffff; /* Texto claro para fundo escuro */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Times New Roman', Times, serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        .enigma {
+            font-style: italic;
+            font-size: 1.25rem;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            white-space: pre-line;
+        }
+
+        input {
+            display: block;
+            margin: 0 auto 20px auto;
+            padding: 12px;
+            width: 280px;
+            border: 1px solid #ccc; /* Borda mais clara para contraste */
+            background: rgba(255, 255, 255, 0.1); /* Fundo sutilmente transparente */
+            text-align: center;
+            font-family: 'Times New Roman', Times, serif;
+            color: #ffffff; /* Texto do input claro */
+            outline: none;
+            font-size: 16px;
+        }
+
+        input::placeholder {
+            color: #cccccc; /* Placeholder mais claro */
+        }
+
+        button {
+            padding: 12px 40px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #ffffff; /* Botão claro para contraste */
+            color: #000000; /* Texto do botão escuro */
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        button:disabled {
+            background-color: #777777;
+            cursor: not-allowed;
+            color: #cccccc;
+        }
+
+        .erro-msg {
+            margin-top: 15px;
+            color: #ff9999; /* Cor de erro mais visível em fundo escuro */
+            font-size: 14px;
+            display: none;
+            text-transform: uppercase;
+        }
+
+        .espera {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #dddddd; /* Cor de espera mais clara */
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="enigma">
+            O rosa o veste, mas a morte o atrai,
+
+            Entre o gelo que sobe e a ordem que cai.
+
+            Devora contos coreanos e encenações na tela,
+
+            Curando a ferida de quem se rebela.
+        </div>
+
+        <form onsubmit="verificarResposta(); return false;">
+            <input type="text" id="resposta" placeholder="Digite sua resposta" autocomplete="off">
+            <button id="confirmar" type="submit">Prosseguir</button>
+        </form>
+
+        <div id="erro-msg" class="erro-msg">Resposta incorreta.</div>
+        <div id="espera" class="espera"></div>
+    </div>
+
+    <script>
+        const respostaCorreta = "ANE"; // Placeholder para a resposta correta
+        let tentativas = 0;
+        let intervalo = null;
+
+        function calcularTempoEspera(t) {
+            if (t === 1) return 1;
+            if (t === 2) return 5;
+            let tempo = (t - 1) * 5;
+            return tempo > 30 ? 30 : tempo;
+        }
+
+        function verificarResposta() {
+            const input = document.getElementById("resposta");
+            const botao = document.getElementById("confirmar");
+            const erroMsg = document.getElementById("erro-msg");
+            const espera = document.getElementById("espera");
+
+            if (input.value.trim().toUpperCase() === respostaCorreta) { /* Usando toUpperCase para ANE */
+                window.location.href = "d8.html";
+                return;
+            }
+
+            tentativas++;
+            erroMsg.style.display = "block";
+
+            let segundosRestantes = calcularTempoEspera(tentativas);
+            botao.disabled = true;
+            espera.style.display = "block";
+            espera.textContent = `Aguarde ${segundosRestantes} segundo(s).`;
+
+            intervalo = setInterval(() => {
+                segundosRestantes--;
+                if (segundosRestantes <= 0) {
+                    clearInterval(intervalo);
+                    espera.style.display = "none";
+                    botao.disabled = false;
+                    input.focus();
+                } else {
+                    espera.textContent = `Aguarde ${segundosRestantes} segundo(s).`;
+                }
+            }, 1000);
+        }
+    </script>
+
+</body>
+</html>

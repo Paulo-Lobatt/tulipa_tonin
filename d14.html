@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>14</title>
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        background-color: #000000;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Times New Roman', Times, serif;
+        overflow: hidden;
+    }
+
+    .container {
+        text-align: center;
+        max-width: 650px;
+        padding: 20px;
+        z-index: 2;
+    }
+
+    .enunciado {
+        font-size: 1.15rem;
+        color: #888;
+        line-height: 1.6;
+        margin-bottom: 40px;
+        text-align: justify;
+        user-select: none;
+    }
+
+    .clicavel {
+        color: inherit;
+        cursor: default; 
+    }
+
+    input {
+        display: block;
+        margin: 0 auto 15px auto;
+        padding: 12px;
+        width: 250px;
+        border: 1px solid #222;
+        background: transparent;
+        text-align: center;
+        font-family: 'Times New Roman', Times, serif;
+        color: #ffffff;
+        outline: none;
+        font-size: 16px;
+        transition: border 0.5s;
+    }
+
+    input:focus {
+        border-color: #444;
+    }
+
+    button {
+        padding: 10px 30px;
+        font-size: 14px;
+        cursor: pointer;
+        background-color: #ffffff;
+        color: #000000;
+        border: none;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: opacity 0.3s;
+    }
+
+    button:hover {
+        opacity: 0.8;
+    }
+
+    .erro {
+        margin-top: 20px;
+        color: #550000;
+        font-size: 12px;
+        display: none;
+        text-transform: uppercase;
+    }
+
+    .footer-reveal {
+        position: absolute;
+        bottom: 50px;
+        width: 100%;
+        text-align: center;
+        min-height: 100px;
+    }
+
+    #textoDica {
+        transition: all 1.5s;
+        opacity: 0;
+        filter: blur(10px);
+        user-select: none;
+    }
+
+    #codigoArea {
+        display: none;
+        transition: opacity 1.5s;
+        opacity: 0;
+    }
+
+    #charadaFinal {
+        display: block;
+        margin-top: 15px;
+        font-size: 0.85rem;
+        color: #555;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        opacity: 0;
+        transition: opacity 2s;
+        user-select: none;
+        max-width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .fragmento-estilo {
+        letter-spacing: 8px;
+        font-weight: bold;
+        font-size: 1.5rem;
+        color: #fff;
+        display: block;
+        user-select: all;
+        cursor: text;
+    }
+
+    .visivel {
+        opacity: 1 !important;
+        filter: blur(0px) !important;
+    }
+
+    .tremer {
+        animation: tremor 0.2s;
+    }
+
+    @keyframes tremor {
+        0% { transform: translate(0); }
+        25% { transform: translate(-2px, 2px); }
+        50% { transform: translate(2px, -2px); }
+        100% { transform: translate(0); }
+    }
+</style>
+</head>
+<body>
+
+<div class="container" id="container">
+    <div class="enunciado">
+        Peregrino de lugar nenhum, vossa visão falha porque vossa alma está gasta. O foco no amanhã é o veneno que vos impede de ver o agora. Olhai para o vácuo sob vossos pés; é exatamente <span class="clicavel" onclick="clicarAqui()">aqui</span> que a vossa jornada termina em cinzas. No há sentido, apenas o frio do solo que reclama o vosso nome.
+    </div>
+
+    <form onsubmit="verificar(); return false;">
+        <input type="text" id="resposta" placeholder="..." autocomplete="off">
+        <button type="submit" id="btnProsseguir">Prosseguir</button>
+    </form>
+    <div id="erro" class="erro">Acesso negado.</div>
+</div>
+
+<div class="footer-reveal">
+    <div id="textoDica">
+        Vossa vontade clama por um tesouro que vossos olhos já escolheram, mas vossas mãos estão vazias perante o que elas pretenderam. No campo onde Imortais sangram e por metais se luta, a resposta reside no vácuo da carteira que vossa ganância escuta. Quanto pesa o tributo que falta para o contrato de cobiça ser selado, e o vosso desejo, enfim, neste mundo de poderes ser saciado?
+    </div>
+    
+    <div id="codigoArea">
+        <span class="fragmento-estilo">EYFX6PQAY</span> 
+        <span id="charadaFinal">
+            A fome foi saciada e o pacto de batalha enfim se firmou, mas olhai para os restos daquilo que a jornada deixou. Após o tributo pago e a passagem para a glória garantida, o que sobra no bolso é a pequena centelha esquecida. Se o milhar foi entregue para a sede enfim acalmar, quanto resta no vácuo para o ciclo se encerrar?
+        </span>
+    </div>
+</div>
+
+<script>
+    let nivelVisibilidade = 0;
+    let estagioFinalLiberado = false;
+
+    function clicarAqui() {
+        if (estagioFinalLiberado) return;
+        const dica = document.getElementById("textoDica");
+        const container = document.getElementById("container");
+
+        nivelVisibilidade += 0.15;
+        if (nivelVisibilidade > 0.7) nivelVisibilidade = 0.7;
+
+        dica.classList.add("visivel");
+        dica.style.opacity = nivelVisibilidade;
+
+        container.classList.remove("tremer");
+        void container.offsetWidth;
+        container.classList.add("tremer");
+    }
+
+    function verificar() {
+        const input = document.getElementById("resposta");
+        const valor = input.value.trim();
+        const erro = document.getElementById("erro");
+        const textoDica = document.getElementById("textoDica");
+        const codigoArea = document.getElementById("codigoArea");
+        const charadaFinal = document.getElementById("charadaFinal");
+
+        if (!estagioFinalLiberado && valor === "265") {
+            estagioFinalLiberado = true;
+            erro.style.display = "none";
+            input.value = "";
+            input.placeholder = "...";
+
+            textoDica.style.display = "none";
+            
+            codigoArea.style.display = "block";
+            setTimeout(() => {
+                codigoArea.style.opacity = "1";
+            }, 10);
+
+            setTimeout(() => {
+                charadaFinal.style.opacity = "1";
+            }, 10000);
+            
+            return;
+        }
+
+        if (estagioFinalLiberado && valor === "135") {
+            window.location.href = "d15.html";
+            return;
+        }
+
+        erro.style.display = "block";
+        input.value = "";
+    }
+</script>
+
+</body>
+</html>
